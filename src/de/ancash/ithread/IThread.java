@@ -1,4 +1,4 @@
-package de.ancash.thread;
+package de.ancash.ithread;
 
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
