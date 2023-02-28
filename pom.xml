@@ -20,7 +20,7 @@
 		<repository>
 			<id>github</id>
 			<name>GitHub Ancash Apache Maven Packages</name>
-			<url>https://maven.pkg.github.com/Ancash/Bazaar</url>
+			<url>https://maven.pkg.github.com/Ancash/IThread</url>
 		</repository>
 	</distributionManagement>
 </project>
