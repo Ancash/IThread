@@ -49,8 +49,8 @@ public class IThread extends Thread{
 		this.printContextOnException = printContextOnException;
 	}
 	
-	public void clear() {
-		context.clear();
+	public static void clearContext() {
+		asIThread().context.clear();
 	}
 	
 	public static Object getContext(String s) {
