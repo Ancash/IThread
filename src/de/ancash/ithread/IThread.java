@@ -31,8 +31,6 @@ public class IThread extends Thread{
 	}
 	
 	public static IThread asIThread() {
-		if(!isIThread())
-			return null;
 		return (IThread) Thread.currentThread();
 	}
 	
@@ -49,18 +47,22 @@ public class IThread extends Thread{
 		this.printContextOnException = printContextOnException;
 	}
 	
-	public static void clearContext() {
+	public static boolean clearContext() {
+		if(!isIThread())
+			return false;
 		asIThread().context.clear();
+		return true;
 	}
 	
 	public static Object getContext(String s) {
 		return asIThread().context.get(s);
 	}
 	
-	public static IThread setContext(String s, Object o) {
-		IThread it = asIThread();
-		it.context.put(s, o);
-		return it;
+	public static boolean setContext(String s, Object o) {
+		if(!isIThread())
+			return false;
+		asIThread().context.put(s, o);
+		return true;
 	}
 	
 	@SuppressWarnings("nls")
