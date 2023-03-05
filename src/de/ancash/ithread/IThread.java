@@ -5,18 +5,20 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class IThread extends Thread{
 	
-	public static void main(String[] args) {
-		IThread t = new IThread(() -> work());
-		t.start();
+	public static void main(String[] args) throws InterruptedException {
+		IThreadPoolExecutor pool = IThreadPoolExecutor.newCachedThreadPool();
+		for(int i = 0; i<10; i++)
+			pool.submit(() -> work());
+		pool.shutdown();
 	}
 	
 	@SuppressWarnings("nls")
 	private static void work() {
-		IThread.setContext("string", "12");
+		IThread.setContext("string", Math.random());
 		IThread.setContext("arr", new int[] {1, 2, 3});
 		IThread.setContext("err", new test());
 		IThread.setContext("map", new HashMap<>());
-		throw new IllegalStateException();
+		throw new NullPointerException();
 	}
 	
 	static class test{
@@ -34,9 +36,9 @@ public class IThread extends Thread{
 		return (IThread) Thread.currentThread();
 	}
 	
-	private final Runnable r;
-	private final boolean printContextOnException;
-	private final ConcurrentHashMap<String, Object> context = new ConcurrentHashMap<String, Object>();
+	protected final Runnable r;
+	protected final boolean printContextOnException;
+	protected final ConcurrentHashMap<String, Object> context = new ConcurrentHashMap<String, Object>();
 	
 	public IThread(Runnable r) {
 		this(r, true);
@@ -66,6 +68,22 @@ public class IThread extends Thread{
 	}
 	
 	@SuppressWarnings("nls")
+	protected static void onThrowable(Thread thread, Throwable t) {
+		IThread it = (IThread) thread;
+		t.printStackTrace();
+		if(it.context.isEmpty()) {
+			System.err.println("no context");
+		}
+		System.err.println("context:");
+		it.context.entrySet().forEach(entry -> {
+			try {
+				System.err.println(entry.getKey() + ": " + entry.getValue());
+			} catch(Throwable th) {
+				System.err.println("could not print value of '" + entry.getKey() + "': " + th.getLocalizedMessage());
+			}
+		});
+	}
+	
 	@Override
 	public void run() {
 		if(!printContextOnException)
@@ -74,18 +92,7 @@ public class IThread extends Thread{
 			try {
 				r.run();
 			} catch (Throwable th) {
-				th.printStackTrace();
-				if(context.isEmpty()) {
-					System.err.println("no context");
-				}
-				System.err.println("context:");
-				context.entrySet().forEach(entry -> {
-					try {
-						System.err.println(entry.getKey() + ": " + entry.getValue());
-					} catch(Throwable t) {
-						System.err.println("could not print value of '" + entry.getKey() + "': " + t.getLocalizedMessage());
-					}
-				});
+				onThrowable(Thread.currentThread(), th);
 			}
 		}
 	}
