@@ -68,7 +68,7 @@ public class IThread extends Thread{
 	}
 	
 	@SuppressWarnings("nls")
-	protected static void onThrowable(Thread thread, Throwable t) {
+	public static void onThrowable(Thread thread, Throwable t) {
 		IThread it = (IThread) thread;
 		t.printStackTrace();
 		if(it.context.isEmpty()) {
