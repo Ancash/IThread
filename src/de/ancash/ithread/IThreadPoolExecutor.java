@@ -44,7 +44,8 @@ public class IThreadPoolExecutor extends ThreadPoolExecutor {
 	@Override
 	protected void afterExecute(Runnable r, Throwable t) {
 		super.afterExecute(r, t);
-		if (t == null) {
+		
+		if (t == null && r instanceof Future<?>) {
 			Future<?> future = (Future<?>) r;
 			try {
 				future.get();
